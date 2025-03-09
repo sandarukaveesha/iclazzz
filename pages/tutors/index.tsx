@@ -12,7 +12,7 @@
 //   FormControl,
 //   InputLabel,
 //   Chip,
-//   Tooltip, // Import Tooltip
+//   Tooltip,
 // } from "@mui/material";
 // import HeroBanner from "../../components/HeroBanner";
 
@@ -55,6 +55,15 @@
 //     "Panadura",
 //   ];
 
+//   // Function to shuffle an array (Fisher-Yates algorithm)
+//   const shuffleArray = (array) => {
+//     for (let i = array.length - 1; i > 0; i--) {
+//       const j = Math.floor(Math.random() * (i + 1));
+//       [array[i], array[j]] = [array[j], array[i]];
+//     }
+//     return array;
+//   };
+
 //   useEffect(() => {
 //     const fetchTutors = async () => {
 //       const sheetId = "1iE6zKoY4sywDhWJKfWtdxm3HmDtTA8GfTsbGnRmzXgk";
@@ -78,7 +87,8 @@
 //           platform: row[7],
 //           location: row[8],
 //         }));
-//         setTutors(tutorsData);
+//         // Shuffle the tutors array before setting it
+//         setTutors(shuffleArray(tutorsData));
 //       }
 //     };
 
@@ -225,7 +235,19 @@
 //                     variant="body2"
 //                     sx={{ mt: 1, fontStyle: "italic" }}
 //                   >
-//                     <Tooltip title={tutor.bio} arrow>
+//                     <Tooltip
+//                       title={tutor.bio}
+//                       arrow
+//                       componentsProps={{
+//                         tooltip: {
+//                           sx: {
+//                             fontSize: "1rem",
+//                             backgroundColor: "#1976d2",
+//                             color: "#fff",
+//                           },
+//                         },
+//                       }}
+//                     >
 //                       <span>
 //                         {tutor.bio.length > 100
 //                           ? tutor.bio.substring(0, 100) + "(..see more)"
@@ -235,7 +257,19 @@
 //                   </Typography>
 //                   <Typography variant="body2" sx={{ mt: 1 }}>
 //                     <strong>Education:</strong>{" "}
-//                     <Tooltip title={tutor.educationalLevel} arrow>
+//                     <Tooltip
+//                       title={tutor.educationalLevel}
+//                       arrow
+//                       componentsProps={{
+//                         tooltip: {
+//                           sx: {
+//                             fontSize: "1rem",
+//                             backgroundColor: "#1976d2",
+//                             color: "#fff",
+//                           },
+//                         },
+//                       }}
+//                     >
 //                       <span>
 //                         {tutor.educationalLevel.length > 100
 //                           ? tutor.educationalLevel.substring(0, 100) +
@@ -246,7 +280,19 @@
 //                   </Typography>
 //                   <Typography variant="body2">
 //                     <strong>Medium:</strong>{" "}
-//                     <Tooltip title={tutor.medium} arrow>
+//                     <Tooltip
+//                       title={tutor.medium}
+//                       arrow
+//                       componentsProps={{
+//                         tooltip: {
+//                           sx: {
+//                             fontSize: "1rem",
+//                             backgroundColor: "#1976d2",
+//                             color: "#fff",
+//                           },
+//                         },
+//                       }}
+//                     >
 //                       <span>
 //                         {tutor.medium.length > 100
 //                           ? tutor.medium.substring(0, 100) + "(..see more)"
@@ -256,17 +302,46 @@
 //                   </Typography>
 //                   <Typography variant="body2">
 //                     <strong>Available:</strong>{" "}
-//                     <Tooltip title={tutor.date} arrow>
-//                       <span>
+//                     <Tooltip
+//                       title={tutor.date}
+//                       arrow
+//                       componentsProps={{
+//                         tooltip: {
+//                           sx: {
+//                             fontSize: "1rem",
+//                             backgroundColor: "#1976d2",
+//                             color: "#fff",
+//                           },
+//                         },
+//                       }}
+//                     >
+//                       <span style={{ cursor: "pointer" }}>
 //                         {tutor.date.length > 10
-//                           ? tutor.date.substring(0, 10) + "(..see more)"
+//                           ? tutor.date.substring(0, 10) + " " // Add a space before "see more"
 //                           : tutor.date}
+//                         {tutor.date.length > 10 && (
+//                           <span style={{ fontSize: "0.8rem", color: "gray" }}>
+//                             (..see more)
+//                           </span>
+//                         )}
 //                       </span>
 //                     </Tooltip>
 //                   </Typography>
 //                   <Typography variant="body2">
 //                     <strong>Platform:</strong>{" "}
-//                     <Tooltip title={tutor.platform} arrow>
+//                     <Tooltip
+//                       title={tutor.platform}
+//                       arrow
+//                       componentsProps={{
+//                         tooltip: {
+//                           sx: {
+//                             fontSize: "1rem",
+//                             backgroundColor: "#1976d2",
+//                             color: "#fff",
+//                           },
+//                         },
+//                       }}
+//                     >
 //                       <span>
 //                         {tutor.platform.length > 100
 //                           ? tutor.platform.substring(0, 100) + "(..see more)"
@@ -276,11 +351,28 @@
 //                   </Typography>
 //                   <Typography variant="body2">
 //                     <strong>Locations:</strong>{" "}
-//                     <Tooltip title={tutor.location} arrow>
-//                       <span>
+//                     <Tooltip
+//                       title={tutor.location}
+//                       arrow
+//                       componentsProps={{
+//                         tooltip: {
+//                           sx: {
+//                             fontSize: "1rem",
+//                             backgroundColor: "#1976d2",
+//                             color: "#fff",
+//                           },
+//                         },
+//                       }}
+//                     >
+//                       <span style={{ cursor: "pointer" }}>
 //                         {tutor.location.length > 10
-//                           ? tutor.location.substring(0, 10) + "(..see more)"
+//                           ? tutor.location.substring(0, 10) + " " // Add a space before "see more"
 //                           : tutor.location}
+//                         {tutor.location.length > 10 && (
+//                           <span style={{ fontSize: "0.8rem", color: "gray" }}>
+//                             (..see more)
+//                           </span>
+//                         )}
 //                       </span>
 //                     </Tooltip>
 //                   </Typography>
@@ -318,15 +410,36 @@ import {
 } from "@mui/material";
 import HeroBanner from "../../components/HeroBanner";
 
-export default function TutorsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSubject, setSelectedSubject] = useState("All");
-  const [selectedLocation, setSelectedLocation] = useState("All");
-  const [selectedDate, setSelectedDate] = useState("All");
-  const [selectedMedium, setSelectedMedium] = useState("All");
-  const [tutors, setTutors] = useState([]);
+// Define the Tutor interface
+interface Tutor {
+  id: string;
+  name: string;
+  subject: string;
+  bio: string;
+  educationalLevel: string;
+  medium: string;
+  date: string;
+  platform: string;
+  location: string;
+}
 
-  const subjects = [
+// Define the FilterOption interface
+interface FilterOption {
+  label: string;
+  state: string;
+  setState: (value: string) => void;
+  options: string[];
+}
+
+export default function TutorsPage() {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedSubject, setSelectedSubject] = useState<string>("All");
+  const [selectedLocation, setSelectedLocation] = useState<string>("All");
+  const [selectedDate, setSelectedDate] = useState<string>("All");
+  const [selectedMedium, setSelectedMedium] = useState<string>("All");
+  const [tutors, setTutors] = useState<Tutor[]>([]);
+
+  const subjects: string[] = [
     "All",
     "Combined Maths",
     "Physics",
@@ -334,7 +447,7 @@ export default function TutorsPage() {
     "Biology",
     "IT",
   ];
-  const dates = [
+  const dates: string[] = [
     "All",
     "Monday",
     "Tuesday",
@@ -344,8 +457,8 @@ export default function TutorsPage() {
     "Saturday",
     "Sunday",
   ];
-  const mediums = ["All", "Sinhala", "English", "Tamil"];
-  const locations = [
+  const mediums: string[] = ["All", "Sinhala", "English", "Tamil"];
+  const locations: string[] = [
     "All",
     "Colombo",
     "Kandy",
@@ -358,7 +471,7 @@ export default function TutorsPage() {
   ];
 
   // Function to shuffle an array (Fisher-Yates algorithm)
-  const shuffleArray = (array) => {
+  const shuffleArray = <T,>(array: T[]): T[] => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
@@ -378,7 +491,7 @@ export default function TutorsPage() {
       const rows = data.values;
 
       if (rows) {
-        const tutorsData = rows.map((row) => ({
+        const tutorsData: Tutor[] = rows.map((row: string[]) => ({
           id: row[0],
           name: row[1],
           subject: row[2],
@@ -432,6 +545,33 @@ export default function TutorsPage() {
     );
   });
 
+  const filterOptions: FilterOption[] = [
+    {
+      label: "Subject",
+      state: selectedSubject,
+      setState: setSelectedSubject,
+      options: subjects,
+    },
+    {
+      label: "Location",
+      state: selectedLocation,
+      setState: setSelectedLocation,
+      options: locations,
+    },
+    {
+      label: "Day",
+      state: selectedDate,
+      setState: setSelectedDate,
+      options: dates,
+    },
+    {
+      label: "Medium",
+      state: selectedMedium,
+      setState: setSelectedMedium,
+      options: mediums,
+    },
+  ];
+
   return (
     <>
       <HeroBanner />
@@ -449,35 +589,13 @@ export default function TutorsPage() {
             justifyContent: "center",
           }}
         >
-          {[
-            {
-              label: "Subject",
-              state: selectedSubject,
-              setState: setSelectedSubject,
-              options: subjects,
-            },
-            {
-              label: "Location",
-              state: selectedLocation,
-              setState: setSelectedLocation,
-              options: locations,
-            },
-            {
-              label: "Day",
-              state: selectedDate,
-              setState: setSelectedDate,
-              options: dates,
-            },
-            {
-              label: "Medium",
-              state: selectedMedium,
-              setState: setSelectedMedium,
-              options: mediums,
-            },
-          ].map(({ label, state, setState, options }) => (
+          {filterOptions.map(({ label, state, setState, options }) => (
             <FormControl sx={{ minWidth: 160 }} key={label}>
               <InputLabel>{label}</InputLabel>
-              <Select value={state} onChange={(e) => setState(e.target.value)}>
+              <Select
+                value={state}
+                onChange={(e) => setState(e.target.value as string)}
+              >
                 {options.map((option) => (
                   <MenuItem key={option} value={option}>
                     {option}
