@@ -471,7 +471,7 @@ export default function TutorsPage() {
                   </Typography>
                   {/* Add "Contact Now" Button */}
                   <Box sx={{ mt: 2, textAlign: "center" }}>
-                    <Link href={`/contact?tutorId=${tutor.id}`} passHref>
+                    <Link href={`https://wa.link/8p2m5u`} passHref>
                       <Button
                         variant="contained"
                         color="primary"
