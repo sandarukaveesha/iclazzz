@@ -298,9 +298,16 @@ export default function TutorsPage() {
                       <Chip
                         key={index}
                         label={subject.trim()}
-                        color="primary"
                         size="small"
-                        sx={{ mt: 2, mb: 1 }}
+                        sx={{
+                          mt: 2,
+                          mb: 1,
+                          backgroundColor: "#1f3c66", // Custom background color
+                          color: "white", // Custom text color
+                          "& .MuiChip-label": {
+                            color: "white", // Ensure the label text is white
+                          },
+                        }}
                       />
                     ))}
                   </Box>
@@ -317,7 +324,7 @@ export default function TutorsPage() {
                         tooltip: {
                           sx: {
                             fontSize: "1rem",
-                            backgroundColor: "#1976d2",
+                            backgroundColor: "#1f3c66",
                             color: "#fff",
                           },
                         },
@@ -344,7 +351,7 @@ export default function TutorsPage() {
                         tooltip: {
                           sx: {
                             fontSize: "1rem",
-                            backgroundColor: "#1976d2",
+                            backgroundColor: "#1f3c66",
                             color: "#fff",
                           },
                         },
@@ -372,7 +379,7 @@ export default function TutorsPage() {
                         tooltip: {
                           sx: {
                             fontSize: "1rem",
-                            backgroundColor: "#1976d2",
+                            backgroundColor: "#1f3c66",
                             color: "#fff",
                           },
                         },
@@ -399,7 +406,7 @@ export default function TutorsPage() {
                         tooltip: {
                           sx: {
                             fontSize: "1rem",
-                            backgroundColor: "#1976d2",
+                            backgroundColor: "#1f3c66",
                             color: "#fff",
                           },
                         },
@@ -426,7 +433,7 @@ export default function TutorsPage() {
                         tooltip: {
                           sx: {
                             fontSize: "1rem",
-                            backgroundColor: "#1976d2",
+                            backgroundColor: "#1f3c66",
                             color: "#fff",
                           },
                         },
@@ -453,7 +460,7 @@ export default function TutorsPage() {
                         tooltip: {
                           sx: {
                             fontSize: "1rem",
-                            backgroundColor: "#1976d2",
+                            backgroundColor: "#1f3c66",
                             color: "#fff",
                           },
                         },
@@ -474,7 +481,6 @@ export default function TutorsPage() {
                     <Link href={`https://wa.link/8p2m5u`} passHref>
                       <Button
                         variant="contained"
-                        color="primary"
                         startIcon={<PhoneIcon />}
                         sx={{
                           width: "100%",
@@ -482,11 +488,14 @@ export default function TutorsPage() {
                           fontWeight: 600,
                           borderRadius: 2,
                           boxShadow: 3,
-                          transition: "transform 0.2s",
+                          backgroundColor: "#1f3c66", // Custom background color
+                          color: "white", // Custom text color
                           "&:hover": {
+                            backgroundColor: "#1a3357", // Darker shade for hover
                             transform: "scale(1.02)",
                             boxShadow: 4,
                           },
+                          transition: "transform 0.2s, background-color 0.2s", // Smooth transition for hover effects
                         }}
                       >
                         Contact Now

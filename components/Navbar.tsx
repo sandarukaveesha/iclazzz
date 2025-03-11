@@ -1,9 +1,9 @@
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
-import Link from 'next/link';
+import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
+import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#1976D2' }}>
+    <AppBar position="static" sx={{ backgroundColor: "#1f3c66" }}>
       <Toolbar>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           IClazz
