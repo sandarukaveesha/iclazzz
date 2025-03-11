@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react"; // Add useRef
 import PhoneIcon from "@mui/icons-material/Phone";
 import {
   Container,
@@ -50,6 +50,12 @@ export default function TutorsPage() {
   const [tutors, setTutors] = useState<Tutor[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1); // Pagination state
   const tutorsPerPage = 6; // Number of tutors per page
+
+  // Create a ref for the search bar container
+  const searchBarRef = useRef<HTMLDivElement>(null);
+
+  // Create a ref to track the previous currentPage value
+  const prevPageRef = useRef<number>(currentPage);
 
   const subjects: string[] = [
     "All",
@@ -121,6 +127,15 @@ export default function TutorsPage() {
 
     fetchTutors();
   }, []);
+
+  // Scroll to the search bar only when the currentPage changes
+  useEffect(() => {
+    if (prevPageRef.current !== currentPage && searchBarRef.current) {
+      searchBarRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+    // Update the previous page ref
+    prevPageRef.current = currentPage;
+  }, [currentPage]);
 
   const filteredTutors = tutors.filter((tutor) => {
     const subjectMatch =
@@ -233,39 +248,42 @@ export default function TutorsPage() {
           Find Your Ideal Tutor
         </Typography>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 2,
-            mb: 3,
-            justifyContent: "center",
-          }}
-        >
-          {filterOptions.map(({ label, state, setState, options }) => (
-            <FormControl sx={{ minWidth: 160 }} key={label}>
-              <InputLabel>{label}</InputLabel>
-              <Select
-                value={state}
-                onChange={(e) => setState(e.target.value as string)}
-              >
-                {options.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          ))}
-        </Box>
+        {/* Add ref to the search bar container */}
+        <Box ref={searchBarRef}>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 2,
+              mb: 3,
+              justifyContent: "center",
+            }}
+          >
+            {filterOptions.map(({ label, state, setState, options }) => (
+              <FormControl sx={{ minWidth: 160 }} key={label}>
+                <InputLabel>{label}</InputLabel>
+                <Select
+                  value={state}
+                  onChange={(e) => setState(e.target.value as string)}
+                >
+                  {options.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ))}
+          </Box>
 
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
-          <TextField
-            label="Search tutors..."
-            variant="outlined"
-            onChange={(e) => setSearchQuery(e.target.value)}
-            sx={{ width: "100%", maxWidth: 400 }}
-          />
+          <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+            <TextField
+              label="Search tutors..."
+              variant="outlined"
+              onChange={(e) => setSearchQuery(e.target.value)}
+              sx={{ width: "100%", maxWidth: 400 }}
+            />
+          </Box>
         </Box>
 
         <Grid container spacing={3}>
@@ -274,8 +292,8 @@ export default function TutorsPage() {
               <Card
                 sx={{
                   boxShadow: 3,
-                  borderRadius: 2,
-                  p: 2,
+                  borderRadius: 4,
+                  p: 1,
                   backgroundColor: "#fff",
                   transition: "0.3s",
                   "&:hover": { transform: "scale(1.05)", boxShadow: 9 },
@@ -514,7 +532,22 @@ export default function TutorsPage() {
             count={totalPages}
             page={currentPage}
             onChange={handlePageChange}
-            color="primary"
+            sx={{
+              "& .MuiPaginationItem-root": {
+                color: "#1f3c66", // Default text color
+                borderColor: "#1f3c66", // Border color for outlined buttons
+              },
+              "& .MuiPaginationItem-root.Mui-selected": {
+                backgroundColor: "#1f3c66", // Background color for the selected page
+                color: "#fff", // Text color for the selected page
+                "&:hover": {
+                  backgroundColor: "#1a3357", // Darker background on hover for the selected page
+                },
+              },
+              "& .MuiPaginationItem-root:hover": {
+                backgroundColor: "rgba(31, 60, 102, 0.1)", // Light background on hover for other pages
+              },
+            }}
           />
         </Box>
 
