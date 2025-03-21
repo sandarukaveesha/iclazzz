@@ -286,7 +286,7 @@ export default function TutorsPage() {
           </Box>
         </Box>
 
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           {currentTutors.map((tutor) => (
             <Grid item key={tutor.id} xs={12} sm={6} md={4}>
               <Card

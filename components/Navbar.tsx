@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   AppBar,
   Toolbar,
-  Typography,
   Button,
   Box,
   IconButton,
@@ -11,6 +10,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -39,6 +39,7 @@ export default function Navbar() {
       {/* Navbar for Desktop */}
       <AppBar position="static" sx={{ backgroundColor: "#1f3c66" }}>
         <Toolbar>
+          {/* Logo */}
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             IClazz
           </Typography>
@@ -85,18 +86,19 @@ export default function Navbar() {
           },
         }}
       >
+        {/* Close Button Outside Menu Bar */}
+        <IconButton
+          onClick={handleDrawerClose}
+          sx={{ position: "absolute", right: 10, top: 10, color: "white" }}
+        >
+          <CloseIcon sx={{ fontSize: "2rem" }} />
+        </IconButton>
         <Box
-          sx={{ width: 250 }}
+          sx={{ width: 250, mt: 8 }} // Adjust margin-top to avoid overlap with close button
           role="presentation"
           onClick={handleDrawerClose}
           onKeyDown={handleDrawerClose}
         >
-          <IconButton
-            onClick={handleDrawerClose}
-            sx={{ position: "absolute", right: 10, top: 10, color: "white" }}
-          >
-            <CloseIcon sx={{ fontSize: "2rem" }} />
-          </IconButton>
           <List>
             {navLinks.map((link) => (
               <ListItem key={link.text} disablePadding>
