@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -15,9 +15,21 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if URL contains `scrollTo` query and scroll to section
+    if (router.query.scrollTo) {
+      const section = document.getElementById(router.query.scrollTo as string);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }, [router.query.scrollTo]);
 
   const handleDrawerOpen = () => {
     setDrawerOpen(true);
@@ -28,11 +40,17 @@ export default function Navbar() {
   };
 
   const handleScrollToSection = (id: string) => {
-    const section = document.getElementById(id);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (router.pathname === "/") {
+      // If already on Home page, scroll to section
+      const section = document.getElementById(id);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    } else {
+      // Navigate to Home page with scrollTo query
+      router.push(`/?scrollTo=${id}`);
     }
-    setDrawerOpen(false); // Close the drawer on mobile
+    setDrawerOpen(false);
   };
 
   return (
@@ -52,18 +70,17 @@ export default function Navbar() {
             >
               About Us
             </Button>
-
-            <Button
-              color="inherit"
-              onClick={() => handleScrollToSection("contact")}
-            >
-              Contact Us
-            </Button>
             <Button
               color="inherit"
               onClick={() => handleScrollToSection("service")}
             >
               Our Services
+            </Button>
+            <Button
+              color="inherit"
+              onClick={() => handleScrollToSection("contact")}
+            >
+              Contact Us
             </Button>
             <Button color="inherit" component={Link} href="/tutors">
               Tutors
@@ -112,8 +129,13 @@ export default function Navbar() {
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
+              <ListItemButton onClick={() => handleScrollToSection("service")}>
+                <ListItemText primary="Our Services" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
               <ListItemButton onClick={() => handleScrollToSection("contact")}>
-                <ListItemText primary="Contact" />
+                <ListItemText primary="Contact Us" />
               </ListItemButton>
             </ListItem>
           </List>
