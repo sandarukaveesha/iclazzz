@@ -156,7 +156,7 @@ export default function Home() {
       </HeroBox>
 
       {/* About Us Section */}
-      <Container sx={{ py: 8 }}>
+      <Container id="about" sx={{ py: 8 }}>
         <Typography
           variant="h4"
           gutterBottom
@@ -187,9 +187,15 @@ export default function Home() {
               }}
             >
               <img
-                src="/path/to/about-us-image.jpg" // Update the path to your image
+                src="/logo.png"
                 alt="About Us"
-                style={{ width: "100%", display: "block" }}
+                style={{
+                  width: "80%",
+                  height: "auto",
+                  maxWidth: "300px",
+                  display: "block",
+                  margin: "auto",
+                }}
               />
             </Box>
           </Grid>
@@ -197,7 +203,7 @@ export default function Home() {
       </Container>
 
       {/* Services Section */}
-      <Box sx={{ backgroundColor: "#f5f5f5", py: 8 }}>
+      <Box id="service" sx={{ backgroundColor: "#f5f5f5", py: 8 }}>
         <Container>
           <Typography
             variant="h4"
@@ -260,7 +266,7 @@ export default function Home() {
       </Box>
 
       {/* Contact Us Section */}
-      <Container sx={{ py: 8 }}>
+      <Container id="contact" sx={{ py: 8 }}>
         <Typography
           variant="h4"
           gutterBottom

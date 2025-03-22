@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"; // Add useRef
+import { useState, useEffect, useRef } from "react";
 import PhoneIcon from "@mui/icons-material/Phone";
 import {
   Container,
@@ -44,7 +44,8 @@ interface FilterOption {
 export default function TutorsPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedSubject, setSelectedSubject] = useState<string>("All");
-  const [selectedLocation, setSelectedLocation] = useState<string>("All");
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("All");
+  const [selectedCity, setSelectedCity] = useState<string>("All");
   const [selectedDate, setSelectedDate] = useState<string>("All");
   const [selectedMedium, setSelectedMedium] = useState<string>("All");
   const [tutors, setTutors] = useState<Tutor[]>([]);
@@ -76,17 +77,56 @@ export default function TutorsPage() {
     "Sunday",
   ];
   const mediums: string[] = ["All", "Sinhala", "English", "Tamil"];
-  const locations: string[] = [
-    "All",
-    "Colombo",
-    "Kandy",
-    "Galle",
-    "Jaffna",
-    "Anuradhapura",
-    "Kurunegala",
-    "Kalutara",
-    "Panadura",
-  ];
+  const districts: string[] = ["All", "Kalutara", "Colombo"];
+  const cities: { [key: string]: string[] } = {
+    All: ["All"],
+    Kalutara: [
+      "All",
+      "Panadura",
+      "Wadduwa",
+      "Thalpitiya",
+      "Kalutara North",
+      "Kalutara South",
+      "Katukurunda",
+      "Payagala",
+      "Maggona",
+      "Beruwala",
+      "Aluthgama",
+      "Nagoda",
+      "Mathugama",
+      "Bandaragama",
+      "Horana",
+      "Walipanna",
+    ],
+    Colombo: [
+      "All",
+      "Moratuwa",
+      "Rathmala",
+      "Mount Lavinia",
+      "Dehiwala",
+      "Wallawatta",
+      "Kollupitiya",
+      "Bambalapitiya",
+      "Nugegoda",
+      "Boralasgmuwa",
+      "Kasbawa",
+      "Piliyandala",
+      "Maharagama",
+      "Padukka",
+      "Athurugiriya",
+      "Baththaramulla",
+      "Awissawella",
+      "Hanwella",
+      "Homagama",
+      "Kalubowila",
+      "Kaduwela",
+      "Kadawatha",
+      "Malambe",
+      "Nawala",
+      "Wallampitiya",
+      "Thalawathugoda",
+    ],
+  };
 
   // Function to shuffle an array (Fisher-Yates algorithm)
   const shuffleArray = <T,>(array: T[]): T[] => {
@@ -156,20 +196,18 @@ export default function TutorsPage() {
         .split(",")
         .map((m) => m.trim())
         .includes(selectedMedium);
-    const locationMatch =
-      selectedLocation === "All" ||
+    const cityMatch =
+      selectedCity === "All" ||
       tutor.location
         .split(",")
         .map((l) => l.trim())
-        .includes(selectedLocation);
+        .includes(selectedCity);
 
     const searchMatch =
       tutor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       tutor.subject.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return (
-      subjectMatch && dateMatch && mediumMatch && locationMatch && searchMatch
-    );
+    return subjectMatch && dateMatch && mediumMatch && cityMatch && searchMatch;
   });
 
   // Pagination logic
@@ -221,12 +259,6 @@ export default function TutorsPage() {
       options: subjects,
     },
     {
-      label: "Location",
-      state: selectedLocation,
-      setState: setSelectedLocation,
-      options: locations,
-    },
-    {
       label: "Day",
       state: selectedDate,
       setState: setSelectedDate,
@@ -274,6 +306,40 @@ export default function TutorsPage() {
                 </Select>
               </FormControl>
             ))}
+
+            {/* District Filter */}
+            <FormControl sx={{ minWidth: 160 }}>
+              <InputLabel>District</InputLabel>
+              <Select
+                value={selectedDistrict}
+                onChange={(e) => {
+                  setSelectedDistrict(e.target.value as string);
+                  setSelectedCity("All"); // Reset city when district changes
+                }}
+              >
+                {districts.map((district) => (
+                  <MenuItem key={district} value={district}>
+                    {district}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            {/* City Filter */}
+            <FormControl sx={{ minWidth: 160 }}>
+              <InputLabel>City</InputLabel>
+              <Select
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value as string)}
+                disabled={selectedDistrict === "All"} // Disable city filter if no district is selected
+              >
+                {cities[selectedDistrict].map((city) => (
+                  <MenuItem key={city} value={city}>
+                    {city}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
 
           <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>

@@ -27,97 +27,95 @@ export default function Navbar() {
     setDrawerOpen(false);
   };
 
-  const navLinks = [
-    { text: "Home", href: "/" },
-    { text: "Tutors", href: "/tutors" },
-    { text: "About Us", href: "/about" },
-    { text: "Contact", href: "/contact" },
-  ];
+  const handleScrollToSection = (id: string) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    setDrawerOpen(false); // Close the drawer on mobile
+  };
 
   return (
     <>
-      {/* Navbar for Desktop */}
       <AppBar position="static" sx={{ backgroundColor: "#1f3c66" }}>
         <Toolbar>
-          {/* Logo */}
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             IClazz
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navLinks.map((link) => (
-              <Button
-                key={link.text}
-                color="inherit"
-                component={Link}
-                href={link.href}
-              >
-                {link.text}
-              </Button>
-            ))}
+            <Button color="inherit" component={Link} href="/">
+              Home
+            </Button>
+            <Button
+              color="inherit"
+              onClick={() => handleScrollToSection("about")}
+            >
+              About Us
+            </Button>
+
+            <Button
+              color="inherit"
+              onClick={() => handleScrollToSection("contact")}
+            >
+              Contact Us
+            </Button>
+            <Button
+              color="inherit"
+              onClick={() => handleScrollToSection("service")}
+            >
+              Our Services
+            </Button>
+            <Button color="inherit" component={Link} href="/tutors">
+              Tutors
+            </Button>
           </Box>
-          {/* Hamburger Menu Icon for Mobile */}
           <IconButton
             color="inherit"
             onClick={handleDrawerOpen}
-            sx={{
-              display: { xs: "block", sm: "none" },
-              transition: "transform 0.3s",
-            }}
+            sx={{ display: { xs: "block", sm: "none" } }}
           >
-            <MenuIcon
-              sx={{
-                fontSize: "2rem",
-                transform: drawerOpen ? "rotate(90deg)" : "rotate(0deg)",
-              }}
-            />
+            <MenuIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
 
-      {/* Drawer for Mobile */}
+      {/* Mobile Drawer */}
       <Drawer
         anchor="right"
         open={drawerOpen}
         onClose={handleDrawerClose}
         sx={{
-          "& .MuiDrawer-paper": {
-            backgroundColor: "#1f3c66",
-            color: "white",
-          },
+          "& .MuiDrawer-paper": { backgroundColor: "#1f3c66", color: "white" },
         }}
       >
-        {/* Close Button Outside Menu Bar */}
         <IconButton
           onClick={handleDrawerClose}
           sx={{ position: "absolute", right: 10, top: 10, color: "white" }}
         >
-          <CloseIcon sx={{ fontSize: "2rem" }} />
+          <CloseIcon />
         </IconButton>
-        <Box
-          sx={{ width: 250, mt: 8 }} // Adjust margin-top to avoid overlap with close button
-          role="presentation"
-          onClick={handleDrawerClose}
-          onKeyDown={handleDrawerClose}
-        >
+        <Box sx={{ width: 250, mt: 8 }} role="presentation">
           <List>
-            {navLinks.map((link) => (
-              <ListItem key={link.text} disablePadding>
-                <ListItemButton
-                  component={Link}
-                  href={link.href}
-                  sx={{
-                    "&:hover": {
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
-                    },
-                  }}
-                >
-                  <ListItemText
-                    primary={link.text}
-                    sx={{ textAlign: "center" }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
+            <ListItem disablePadding>
+              <ListItemButton component={Link} href="/">
+                <ListItemText primary="Home" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} href="/tutors">
+                <ListItemText primary="Tutors" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => handleScrollToSection("about")}>
+                <ListItemText primary="About Us" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => handleScrollToSection("contact")}>
+                <ListItemText primary="Contact" />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Box>
       </Drawer>
