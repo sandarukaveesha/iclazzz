@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import PhoneIcon from "@mui/icons-material/Phone";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import ContactMailIcon from "@mui/icons-material/ContactMail";
 import {
   Container,
   Grid,
@@ -410,20 +412,25 @@ export default function TutorsPage() {
                             fontSize: "1rem",
                             backgroundColor: "#1f3c66",
                             color: "#fff",
+                            maxWidth: 400, // Ensures long text wraps
                           },
                         },
                       }}
                     >
                       <span
-                        onClick={() => handleTooltipOpen(tutor.id, "bio")}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevents parent element events (if any)
+                          handleTooltipOpen(tutor.id, "bio");
+                        }}
                         style={{ cursor: "pointer" }}
                       >
-                        {tutor.bio.length > 100
-                          ? tutor.bio.substring(0, 100) + "(..see more)"
+                        {tutor.bio.length > 15
+                          ? `${tutor.bio.substring(0, 15)}(...see more)`
                           : tutor.bio}
                       </span>
                     </Tooltip>
                   </Typography>
+
                   <Typography variant="body2" sx={{ mt: 1 }}>
                     <strong>Education:</strong>{" "}
                     <Tooltip
@@ -437,17 +444,23 @@ export default function TutorsPage() {
                             fontSize: "1rem",
                             backgroundColor: "#1f3c66",
                             color: "#fff",
+                            maxWidth: 400,
                           },
                         },
                       }}
                     >
                       <span
-                        onClick={() => handleTooltipOpen(tutor.id, "education")}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleTooltipOpen(tutor.id, "education");
+                        }}
                         style={{ cursor: "pointer" }}
                       >
                         {tutor.educationalLevel.length > 100
-                          ? tutor.educationalLevel.substring(0, 100) +
-                            "(..see more)"
+                          ? `${tutor.educationalLevel.substring(
+                              0,
+                              100
+                            )}(...see more)`
                           : tutor.educationalLevel}
                       </span>
                     </Tooltip>
@@ -618,9 +631,46 @@ export default function TutorsPage() {
         </Box>
 
         {filteredTutors.length === 0 && (
-          <Typography variant="h6" color="error" align="center" sx={{ mt: 3 }}>
-            No tutors found.
-          </Typography>
+          <Box
+            sx={{
+              textAlign: "center",
+              p: 4,
+              border: "1px dashed",
+              borderColor: "primary.main",
+              borderRadius: 2,
+              backgroundColor: "rgba(25, 118, 210, 0.05)",
+              maxWidth: 500,
+              mx: "auto",
+              my: 4,
+            }}
+          >
+            <ErrorOutlineIcon color="primary" sx={{ fontSize: 48, mb: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              Couldn't find your perfect tutor?
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+              We'll help you find a customized tutor matching your specific
+              requirements
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              startIcon={<ContactMailIcon />}
+              sx={{
+                px: 4,
+                py: 1.5,
+                borderRadius: 50,
+                boxShadow: 2,
+                "&:hover": {
+                  boxShadow: 4,
+                  transform: "translateY(-2px)",
+                },
+              }}
+            >
+              Request Custom Tutor
+            </Button>
+          </Box>
         )}
       </Container>
     </>

@@ -34,13 +34,27 @@ const fadeIn = keyframes`
 
 // Styled components
 const HeroBox = styled(Box)(({ theme }) => ({
-  background: "linear-gradient(135deg, #1f3c66, #4a90e2)",
+  position: "relative",
   color: "white",
   padding: "150px 0",
   textAlign: "center",
-  position: "relative",
   overflow: "hidden",
   animation: `${fadeIn} 1s ease-out`,
+
+  // Background image with dark overlay
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: `
+      linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+      url('/home.jpg') center/cover no-repeat
+    `,
+    zIndex: -1,
+  },
 }));
 
 const GradientButton = styled(Button)(({ theme }) => ({
@@ -168,14 +182,16 @@ export default function Home() {
         <Grid container spacing={4} alignItems="center">
           <Grid item xs={12} md={6}>
             <Typography variant="body1" paragraph>
-              At IClazz, we are dedicated to helping students find the best
-              tutors to achieve their academic goals. Our platform connects
-              students with experienced tutors in various subjects.
+              iClazz is a professional platform designed to connect students
+              with the best tutors for individual home or online classes.
             </Typography>
             <Typography variant="body1" paragraph>
-              Whether you need help with math, science, or language arts, we
-              have the right tutor for you. Our tutors are highly qualified and
-              passionate about teaching.
+              We specialize in providing highly talented university students
+              with extensive teaching experience, ensuring top-quality
+              education. Our platform is user-friendly, trustworthy, and
+              committed to excellence, making it easy for students to find the
+              perfect tutor while guaranteeing a reliable and efficient learning
+              experience.
             </Typography>
           </Grid>
           <Grid item xs={12} md={6}>
