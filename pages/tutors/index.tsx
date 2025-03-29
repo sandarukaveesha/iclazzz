@@ -575,7 +575,7 @@ export default function TutorsPage() {
                   </Typography>
                   {/* Add "Contact Now" Button */}
                   <Box sx={{ mt: 2, textAlign: "center" }}>
-                    <Link href={`https://wa.link/8p2m5u`} passHref>
+                    <Link href={`https://wa.link/f8ewij`} passHref>
                       <Button
                         variant="contained"
                         startIcon={<PhoneIcon />}
@@ -657,6 +657,7 @@ export default function TutorsPage() {
               color="primary"
               size="large"
               startIcon={<ContactMailIcon />}
+              onClick={() => window.open("https://wa.link/mysox5")}
               sx={{
                 px: 4,
                 py: 1.5,

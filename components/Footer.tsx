@@ -24,7 +24,7 @@ export default function Footer() {
             </Typography>
             <Box>
               <IconButton
-                href="https://facebook.com"
+                href="https://www.facebook.com/share/1E8pcVashX/"
                 target="_blank"
                 rel="noopener"
                 sx={{ color: "white" }}
@@ -65,24 +65,8 @@ export default function Footer() {
             >
               <PhoneIcon />
               <Typography variant="body1">
-                <Link href="tel:+94123456789" color="inherit" underline="hover">
-                  +94 123 456 789
-                </Link>
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 1,
-                mt: 1,
-              }}
-            >
-              <PhoneIcon />
-              <Typography variant="body1">
-                <Link href="tel:+94123456789" color="inherit" underline="hover">
-                  +94 987 654 321
+                <Link href="tel:+94717474228" color="inherit" underline="hover">
+                  +94 71 747 4228
                 </Link>
               </Typography>
             </Box>
@@ -102,9 +86,7 @@ export default function Footer() {
               }}
             >
               <LocationOnIcon />
-              <Typography variant="body1">
-                123 Main Street, Colombo, Sri Lanka
-              </Typography>
+              <Typography variant="body1">Panadura, Sri Lanka</Typography>
             </Box>
           </Grid>
         </Grid>
