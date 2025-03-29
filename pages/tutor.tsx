@@ -10,6 +10,7 @@ import {
   TextField,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { keyframes } from "@emotion/react";
@@ -45,8 +46,6 @@ const HeroBox = styled(Box)(({ theme }) => ({
   textAlign: "center",
   overflow: "hidden",
   animation: `${fadeIn} 1s ease-out`,
-
-  // Background image with dark overlay
   "&::before": {
     content: '""',
     position: "absolute",
@@ -56,7 +55,7 @@ const HeroBox = styled(Box)(({ theme }) => ({
     bottom: 0,
     background: `
       linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-      url('/tutor-bg.jpg') center/cover no-repeat
+      url('/tutors.jpeg') center/cover no-repeat
     `,
     zIndex: -1,
   },
@@ -75,15 +74,6 @@ const GradientButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const BenefitCard = styled(Card)(({ theme }) => ({
-  transition: "transform 0.3s, box-shadow 0.3s",
-  height: "100%",
-  "&:hover": {
-    transform: "scale(1.05)",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-  },
-}));
-
 export default function Tutor() {
   const [formData, setFormData] = useState({
     name: "",
@@ -92,22 +82,87 @@ export default function Tutor() {
     subject: "",
     experience: "",
   });
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error",
+  });
+
+  // Replace with your actual WhatsApp Business number (with country code, no + or 0)
+  const WHATSAPP_BUSINESS_NUMBER = "94717474228";
+  const BUSINESS_NAME = "iclazz";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  const sendToWhatsAppBusiness = async () => {
+    try {
+      setLoading(true);
+
+      const message = `*New Tutor Application for ${BUSINESS_NAME}*\n\n
+        *Name:* ${formData.name}\n
+        *Email:* ${formData.email}\n
+        *Phone:* ${formData.phone}\n
+        *Subject:* ${formData.subject}\n
+        *Experience:* ${formData.experience}\n\n
+        _Submitted via IClazz Website_`;
+
+      // Create WhatsApp Business API link
+      const whatsappUrl = `https://wa.me/${WHATSAPP_BUSINESS_NUMBER}?text=${encodeURIComponent(
+        message
+      )}`;
+
+      // Open in new tab
+      const newWindow = window.open(whatsappUrl, "_blank");
+
+      if (
+        !newWindow ||
+        newWindow.closed ||
+        typeof newWindow.closed === "undefined"
+      ) {
+        throw new Error("Popup blocked. Please allow popups for this site.");
+      }
+
+      setSnackbar({
+        open: true,
+        message:
+          "WhatsApp is opening with your application details. Please complete the submission there.",
+        severity: "success",
+      });
+
+      // Reset form after successful submission
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        experience: "",
+      });
+    } catch (error) {
+      console.error("Error sending to WhatsApp:", error);
+      setSnackbar({
+        open: true,
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to open WhatsApp. Please try again.",
+        severity: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    setSnackbarOpen(true);
-    // Here you would typically send this data to your backend
+    sendToWhatsAppBusiness();
   };
 
   const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -141,7 +196,6 @@ export default function Tutor() {
             Apply Now
           </GradientButton>
         </Container>
-        {/* Decorative shape at the bottom */}
         <Box
           sx={{
             position: "absolute",
@@ -155,6 +209,7 @@ export default function Tutor() {
         />
       </HeroBox>
 
+      {/* Benefits Section (unchanged from your original) */}
       <Box sx={{ py: 8, backgroundColor: "#f5f5f5" }}>
         <Container>
           <Typography
@@ -375,8 +430,18 @@ export default function Tutor() {
               />
             </Grid>
             <Grid item xs={12} sx={{ textAlign: "center", mt: 2 }}>
-              <GradientButton type="submit" variant="contained" size="large">
-                Submit Application
+              <GradientButton
+                type="submit"
+                variant="contained"
+                size="large"
+                disabled={loading}
+                startIcon={
+                  loading ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : null
+                }
+              >
+                {loading ? "Processing..." : "Submit via WhatsApp"}
               </GradientButton>
             </Grid>
           </Grid>
@@ -385,18 +450,17 @@ export default function Tutor() {
 
       {/* Snackbar for Notifications */}
       <Snackbar
-        open={snackbarOpen}
+        open={snackbar.open}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           onClose={handleSnackbarClose}
-          severity="success"
+          severity={snackbar.severity}
           sx={{ width: "100%" }}
         >
-          Your application has been submitted successfully! We'll contact you
-          soon.
+          {snackbar.message}
         </Alert>
       </Snackbar>
     </Box>

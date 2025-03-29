@@ -32,7 +32,7 @@ export default function Footer() {
                 <FacebookIcon />
               </IconButton>
               <IconButton
-                href="https://instagram.com"
+                href="https://www.instagram.com/iclazz_education?utm_source=qr&igsh=aDhwcWxwaDQyZHE0"
                 target="_blank"
                 rel="noopener"
                 sx={{ color: "white" }}
@@ -40,7 +40,7 @@ export default function Footer() {
                 <InstagramIcon />
               </IconButton>
               <IconButton
-                href="https://tiktok.com"
+                href="https://vm.tiktok.com/ZSrY11v8E/"
                 target="_blank"
                 rel="noopener"
                 sx={{ color: "white" }}

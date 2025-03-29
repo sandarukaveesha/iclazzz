@@ -428,7 +428,7 @@ export default function Home() {
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
               <EmailIcon sx={{ mr: 2, color: "#1f3c66" }} />
-              <Typography variant="body1">support@tutorfinder.com</Typography>
+              <Typography variant="body1">iclazzeducation@gmail.com</Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <PhoneIcon sx={{ mr: 2, color: "#1f3c66" }} />
