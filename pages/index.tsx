@@ -18,25 +18,25 @@ const fadeIn = keyframes`
 
 // Styled components
 const PageContainer = styled(Box)({
-  minHeight: "100vh", // Use 100vh instead of 200vh
+  minHeight: "100vh",
   display: "flex",
   flexDirection: "column",
-  justifyContent: "flex-start", // Changed from "center" to "flex-start"
+  justifyContent: "flex-start",
   alignItems: "center",
   background: "white",
   padding: "1rem",
-  boxSizing: "border-box", // Ensures padding is included in height calculation
+  boxSizing: "border-box",
 });
 
 const ContentContainer = styled(Box)({
   maxWidth: "1000px",
   width: "100%",
-  padding: "0 1rem", // Added horizontal padding
+  padding: "0 1rem",
   animation: `${fadeIn} 0.5s ease-out`,
 });
 
 const RoleCard = styled(Paper)({
-  padding: "1.5rem", // Reduced padding
+  padding: "1.5rem",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -53,7 +53,7 @@ const RoleCard = styled(Paper)({
 });
 
 const Logo = styled("img")({
-  width: "120px", // Slightly smaller logo
+  width: "120px",
   height: "auto",
   marginBottom: "0.5rem",
 });
@@ -73,12 +73,8 @@ export default function RoleSelectionPage() {
       <PageContainer>
         <ContentContainer>
           <Box sx={{ textAlign: "center", mb: 3 }}>
-            {" "}
-            {/* Reduced margin */}
             <Logo src="/logo.png" alt="IClazz Logo" />
             <Typography variant="h4" fontWeight="bold">
-              {" "}
-              {/* Smaller heading */}
               Welcome to IClazz
             </Typography>
             <Typography variant="subtitle1" color="text.secondary">
@@ -86,10 +82,15 @@ export default function RoleSelectionPage() {
             </Typography>
           </Box>
 
-          <Grid container spacing={2}>
-            {" "}
-            {/* Reduced spacing */}
-            <Grid item xs={12} md={6}>
+          {/* Change from Grid to Box for more control */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              gap: { xs: 4, md: 2 },
+            }}
+          >
+            <Box sx={{ flex: 1 }}>
               <RoleCard onClick={() => handleRoleSelection("student")}>
                 <PersonIcon sx={{ fontSize: 50, color: "#1f3c66", mb: 1 }} />
                 <Typography variant="h5" fontWeight="bold" mb={1}>
@@ -114,8 +115,8 @@ export default function RoleSelectionPage() {
                   CONTINUE AS STUDENT
                 </Button>
               </RoleCard>
-            </Grid>
-            <Grid item xs={12} md={6}>
+            </Box>
+            <Box sx={{ flex: 1 }}>
               <RoleCard onClick={() => handleRoleSelection("tutor")}>
                 <SchoolIcon sx={{ fontSize: 50, color: "#1f3c66", mb: 1 }} />
                 <Typography variant="h5" fontWeight="bold" mb={1}>
@@ -140,8 +141,8 @@ export default function RoleSelectionPage() {
                   CONTINUE AS TUTOR
                 </Button>
               </RoleCard>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </ContentContainer>
       </PageContainer>
     </>

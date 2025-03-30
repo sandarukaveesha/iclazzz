@@ -18,10 +18,14 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 interface NavbarProps {
-  hideNavbar?: boolean; // Changed from hideMenu to hideNavbar
+  hideNavbar?: boolean;
+  hideMenuItems?: boolean; // New prop for hiding just the menu items
 }
 
-export default function Navbar({ hideNavbar = false }: NavbarProps) {
+export default function Navbar({
+  hideNavbar = false,
+  hideMenuItems = false,
+}: NavbarProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const router = useRouter();
 
@@ -73,39 +77,43 @@ export default function Navbar({ hideNavbar = false }: NavbarProps) {
             IClazz
           </Typography>
 
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            <Button color="inherit" component={Link} href="/home">
-              Home
-            </Button>
-            <Button
-              color="inherit"
-              onClick={() => handleScrollToSection("about")}
-            >
-              About Us
-            </Button>
-            <Button
-              color="inherit"
-              onClick={() => handleScrollToSection("service")}
-            >
-              Our Services
-            </Button>
-            <Button
-              color="inherit"
-              onClick={() => handleScrollToSection("contact")}
-            >
-              Contact Us
-            </Button>
-            <Button color="inherit" component={Link} href="/tutors">
-              Tutors
-            </Button>
-          </Box>
-          <IconButton
-            color="inherit"
-            onClick={handleDrawerOpen}
-            sx={{ display: { xs: "block", sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
+          {!hideMenuItems && (
+            <>
+              <Box sx={{ display: { xs: "none", sm: "block" } }}>
+                <Button color="inherit" component={Link} href="/home">
+                  Home
+                </Button>
+                <Button
+                  color="inherit"
+                  onClick={() => handleScrollToSection("about")}
+                >
+                  About Us
+                </Button>
+                <Button
+                  color="inherit"
+                  onClick={() => handleScrollToSection("service")}
+                >
+                  Our Services
+                </Button>
+                <Button
+                  color="inherit"
+                  onClick={() => handleScrollToSection("contact")}
+                >
+                  Contact Us
+                </Button>
+                <Button color="inherit" component={Link} href="/tutors">
+                  Tutors
+                </Button>
+              </Box>
+              <IconButton
+                color="inherit"
+                onClick={handleDrawerOpen}
+                sx={{ display: { xs: "block", sm: "none" } }}
+              >
+                <MenuIcon />
+              </IconButton>
+            </>
+          )}
         </Toolbar>
       </AppBar>
 
