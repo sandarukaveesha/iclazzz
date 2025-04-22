@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Container } from "@mui/material";
 import { useRouter } from "next/router";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -125,6 +126,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
       <Navbar hideMenuItems={isIndexPage} />
       <Container sx={{ minHeight: "80vh", mt: 4 }}>
+        <Analytics />
         <Component {...pageProps} />
       </Container>
       <Footer />
