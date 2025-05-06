@@ -56,7 +56,15 @@ export default function TutorsPage() {
   const searchBarRef = useRef<HTMLDivElement>(null);
   const prevPageRef = useRef<number>(currentPage);
 
-  const olSubjects = ["All", "Sinhala", "Tamil", "Maths"];
+  const olSubjects = [
+    "All",
+    "Science",
+    "Mathematics",
+    "English",
+    "Commerce",
+    "ICT",
+    "Buddhism & History",
+  ];
   const alSubjects = [
     "All",
     "Combined Maths",
