@@ -22,7 +22,6 @@ import {
 import Link from "next/link";
 import HeroBanner from "../../components/HeroBanner";
 
-// Define the Tutor interface
 interface Tutor {
   id: string;
   name: string;
@@ -35,7 +34,6 @@ interface Tutor {
   location: string;
 }
 
-// Define the FilterOption interface
 interface FilterOption {
   label: string;
   state: string;
@@ -44,6 +42,8 @@ interface FilterOption {
 }
 
 export default function TutorsPage() {
+  const [gradeType, setGradeType] = useState<string>("");
+  const [gradeLevel, setGradeLevel] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedSubject, setSelectedSubject] = useState<string>("All");
   const [selectedDistrict, setSelectedDistrict] = useState<string>("All");
@@ -51,16 +51,13 @@ export default function TutorsPage() {
   const [selectedDate, setSelectedDate] = useState<string>("All");
   const [selectedMedium, setSelectedMedium] = useState<string>("All");
   const [tutors, setTutors] = useState<Tutor[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1); // Pagination state
-  const tutorsPerPage = 6; // Number of tutors per page
-
-  // Create a ref for the search bar container
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const tutorsPerPage = 6;
   const searchBarRef = useRef<HTMLDivElement>(null);
-
-  // Create a ref to track the previous currentPage value
   const prevPageRef = useRef<number>(currentPage);
 
-  const subjects: string[] = [
+  const olSubjects = ["All", "Sinhala", "Tamil", "Maths"];
+  const alSubjects = [
     "All",
     "Combined Maths",
     "Physics",
@@ -68,7 +65,9 @@ export default function TutorsPage() {
     "Biology",
     "IT",
   ];
-  const dates: string[] = [
+  const subjects = gradeType === "AL" ? alSubjects : olSubjects;
+
+  const dates = [
     "All",
     "Monday",
     "Tuesday",
@@ -78,8 +77,8 @@ export default function TutorsPage() {
     "Saturday",
     "Sunday",
   ];
-  const mediums: string[] = ["All", "Sinhala", "English", "Tamil"];
-  const districts: string[] = ["All", "Kalutara", "Colombo"];
+  const mediums = ["All", "Sinhala", "English", "Tamil"];
+  const districts = ["All", "Kalutara", "Colombo"];
   const cities: { [key: string]: string[] } = {
     All: ["All"],
     Kalutara: [
@@ -130,7 +129,6 @@ export default function TutorsPage() {
     ],
   };
 
-  // Function to shuffle an array (Fisher-Yates algorithm)
   const shuffleArray = <T,>(array: T[]): T[] => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -140,8 +138,14 @@ export default function TutorsPage() {
   };
 
   useEffect(() => {
+    if (!gradeType) return;
+    if (gradeType === "OL" && !gradeLevel) return;
+
     const fetchTutors = async () => {
-      const sheetId = "1iE6zKoY4sywDhWJKfWtdxm3HmDtTA8GfTsbGnRmzXgk";
+      const sheetId =
+        gradeType === "AL"
+          ? "1iE6zKoY4sywDhWJKfWtdxm3HmDtTA8GfTsbGnRmzXgk" // AL sheet
+          : "1I50I3fizmCUXP0RXkjDgmacJwrMlI40SX09jGPniIg8"; // Replace with your OL sheet ID
       const range = "Sheet1!A2:I";
 
       const res = await fetch(
@@ -162,20 +166,17 @@ export default function TutorsPage() {
           platform: row[7],
           location: row[8],
         }));
-        // Shuffle the tutors array before setting it
         setTutors(shuffleArray(tutorsData));
       }
     };
 
     fetchTutors();
-  }, []);
+  }, [gradeType, gradeLevel]);
 
-  // Scroll to the search bar only when the currentPage changes
   useEffect(() => {
     if (prevPageRef.current !== currentPage && searchBarRef.current) {
       searchBarRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    // Update the previous page ref
     prevPageRef.current = currentPage;
   }, [currentPage]);
 
@@ -204,7 +205,6 @@ export default function TutorsPage() {
         .split(",")
         .map((l) => l.trim())
         .includes(selectedCity);
-
     const searchMatch =
       tutor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       tutor.subject.toLowerCase().includes(searchQuery.toLowerCase());
@@ -212,7 +212,6 @@ export default function TutorsPage() {
     return subjectMatch && dateMatch && mediumMatch && cityMatch && searchMatch;
   });
 
-  // Pagination logic
   const indexOfLastTutor = currentPage * tutorsPerPage;
   const indexOfFirstTutor = indexOfLastTutor - tutorsPerPage;
   const currentTutors = filteredTutors.slice(
@@ -228,7 +227,6 @@ export default function TutorsPage() {
     setCurrentPage(page);
   };
 
-  // State to manage tooltip visibility for each field in each tutor
   const [tooltipOpen, setTooltipOpen] = useState<{
     [key: string]: { [key: string]: boolean };
   }>({});
@@ -282,355 +280,464 @@ export default function TutorsPage() {
           Find Your Ideal Tutor
         </Typography>
 
-        {/* Add ref to the search bar container */}
-        <Box ref={searchBarRef}>
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 2,
-              mb: 3,
-              justifyContent: "center",
-            }}
-          >
-            {filterOptions.map(({ label, state, setState, options }) => (
-              <FormControl sx={{ minWidth: 160 }} key={label}>
-                <InputLabel>{label}</InputLabel>
-                <Select
-                  value={state}
-                  onChange={(e) => setState(e.target.value as string)}
-                >
-                  {options.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ))}
+        {/* Grade Type Selection */}
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+          <FormControl sx={{ minWidth: 200 }}>
+            <InputLabel>Select Level</InputLabel>
+            <Select
+              value={gradeType}
+              onChange={(e) => {
+                setGradeType(e.target.value as string);
+                setGradeLevel("");
+                setSelectedSubject("All");
+                setSelectedDistrict("All");
+                setSelectedCity("All");
+                setSelectedDate("All");
+                setSelectedMedium("All");
+                setSearchQuery("");
+                setCurrentPage(1);
+              }}
+              label="Select Grade Type"
+            >
+              <MenuItem value="AL">Advanced Level (A/L)</MenuItem>
+              <MenuItem value="OL">Ordinary Level (O/L)</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
 
-            {/* District Filter */}
-            <FormControl sx={{ minWidth: 160 }}>
-              <InputLabel>District</InputLabel>
-              <Select
-                value={selectedDistrict}
-                onChange={(e) => {
-                  setSelectedDistrict(e.target.value as string);
-                  setSelectedCity("All"); // Reset city when district changes
-                }}
-              >
-                {districts.map((district) => (
-                  <MenuItem key={district} value={district}>
-                    {district}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            {/* City Filter */}
-            <FormControl sx={{ minWidth: 160 }}>
-              <InputLabel>City</InputLabel>
-              <Select
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value as string)}
-                disabled={selectedDistrict === "All"} // Disable city filter if no district is selected
-              >
-                {cities[selectedDistrict].map((city) => (
-                  <MenuItem key={city} value={city}>
-                    {city}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-
+        {/* Grade Level Selection (only for OL) */}
+        {gradeType === "OL" && (
           <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
-            <TextField
-              label="Search tutors..."
-              variant="outlined"
-              onChange={(e) => setSearchQuery(e.target.value)}
-              sx={{ width: "100%", maxWidth: 400 }}
-            />
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel>Select Grade</InputLabel>
+              <Select
+                value={gradeLevel}
+                onChange={(e) => {
+                  setGradeLevel(e.target.value as string);
+                  setSelectedSubject("All");
+                  setSelectedDistrict("All");
+                  setSelectedCity("All");
+                  setSelectedDate("All");
+                  setSelectedMedium("All");
+                  setSearchQuery("");
+                  setCurrentPage(1);
+                }}
+                label="Select Grade"
+              >
+                <MenuItem value="10">Grade 10</MenuItem>
+                <MenuItem value="11">Grade 11</MenuItem>
+              </Select>
+            </FormControl>
           </Box>
-        </Box>
+        )}
 
-        <Grid container spacing={4}>
-          {currentTutors.map((tutor) => (
-            <Grid item key={tutor.id} xs={12} sm={6} md={4}>
-              <Card
+        {/* Show content only when grade type (and level if OL) is selected */}
+        {gradeType === "AL" || (gradeType === "OL" && gradeLevel) ? (
+          <>
+            <Box ref={searchBarRef}>
+              <Box
                 sx={{
-                  boxShadow: 3,
-                  borderRadius: 4,
-                  p: 1,
-                  backgroundColor: "#fff",
-                  transition: "0.3s",
-                  "&:hover": { transform: "scale(1.05)", boxShadow: 9 },
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 2,
+                  mb: 3,
+                  justifyContent: "center",
                 }}
               >
-                <CardContent>
-                  <Box>
-                    <Typography variant="h6" fontWeight="bold">
-                      {tutor.name}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "gray", marginTop: 0 }}
+                {filterOptions.map(({ label, state, setState, options }) => (
+                  <FormControl sx={{ minWidth: 160 }} key={label}>
+                    <InputLabel>{label}</InputLabel>
+                    <Select
+                      value={state}
+                      onChange={(e) => setState(e.target.value as string)}
                     >
-                      ({tutor.id})
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                    {tutor.subject?.split(",").map((subject, index) => (
-                      <Chip
-                        key={index}
-                        label={subject.trim()}
-                        size="small"
-                        sx={{
-                          mt: 2,
-                          mb: 1,
-                          backgroundColor: "#1f3c66", // Custom background color
-                          color: "white", // Custom text color
-                          "& .MuiChip-label": {
-                            color: "white", // Ensure the label text is white
-                          },
-                        }}
-                      />
-                    ))}
-                  </Box>
-                  <Typography
-                    variant="body2"
-                    sx={{ mt: 1, fontStyle: "italic" }}
+                      {options.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                ))}
+
+                <FormControl sx={{ minWidth: 160 }}>
+                  <InputLabel>District</InputLabel>
+                  <Select
+                    value={selectedDistrict}
+                    onChange={(e) => {
+                      setSelectedDistrict(e.target.value as string);
+                      setSelectedCity("All");
+                    }}
                   >
-                    <Tooltip
-                      title={tutor.bio}
-                      arrow
-                      open={tooltipOpen[tutor.id]?.bio || false}
-                      onClose={() => handleTooltipClose(tutor.id, "bio")}
-                      componentsProps={{
-                        tooltip: {
-                          sx: {
-                            fontSize: "1rem",
-                            backgroundColor: "#1f3c66",
-                            color: "#fff",
-                            maxWidth: 400, // Ensures long text wraps
-                          },
-                        },
-                      }}
-                    >
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevents parent element events (if any)
-                          handleTooltipOpen(tutor.id, "bio");
-                        }}
-                        style={{ cursor: "pointer" }}
-                      >
-                        {tutor.bio.length > 15
-                          ? `${tutor.bio.substring(0, 15)}(...see more)`
-                          : tutor.bio}
-                      </span>
-                    </Tooltip>
-                  </Typography>
+                    {districts.map((district) => (
+                      <MenuItem key={district} value={district}>
+                        {district}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
-                  <Typography variant="body2" sx={{ mt: 1 }}>
-                    <strong>Education:</strong>{" "}
-                    <Tooltip
-                      title={tutor.educationalLevel}
-                      arrow
-                      open={tooltipOpen[tutor.id]?.education || false}
-                      onClose={() => handleTooltipClose(tutor.id, "education")}
-                      componentsProps={{
-                        tooltip: {
-                          sx: {
-                            fontSize: "1rem",
-                            backgroundColor: "#1f3c66",
-                            color: "#fff",
-                            maxWidth: 400,
-                          },
-                        },
-                      }}
-                    >
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleTooltipOpen(tutor.id, "education");
-                        }}
-                        style={{ cursor: "pointer" }}
+                <FormControl sx={{ minWidth: 160 }}>
+                  <InputLabel>City</InputLabel>
+                  <Select
+                    value={selectedCity}
+                    onChange={(e) => setSelectedCity(e.target.value as string)}
+                    disabled={selectedDistrict === "All"}
+                  >
+                    {cities[selectedDistrict].map((city) => (
+                      <MenuItem key={city} value={city}>
+                        {city}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+
+              <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+                <TextField
+                  label="Search tutors..."
+                  variant="outlined"
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  sx={{ width: "100%", maxWidth: 400 }}
+                />
+              </Box>
+            </Box>
+
+            <Grid container spacing={4}>
+              {currentTutors.map((tutor) => (
+                <Grid item key={tutor.id} xs={12} sm={6} md={4}>
+                  <Card
+                    sx={{
+                      boxShadow: 3,
+                      borderRadius: 4,
+                      p: 1,
+                      backgroundColor: "#fff",
+                      transition: "0.3s",
+                      "&:hover": { transform: "scale(1.05)", boxShadow: 9 },
+                    }}
+                  >
+                    <CardContent>
+                      <Box>
+                        <Typography variant="h6" fontWeight="bold">
+                          {tutor.name}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "gray", marginTop: 0 }}
+                        >
+                          ({tutor.id})
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                        {tutor.subject?.split(",").map((subject, index) => (
+                          <Chip
+                            key={index}
+                            label={subject.trim()}
+                            size="small"
+                            sx={{
+                              mt: 2,
+                              mb: 1,
+                              backgroundColor: "#1f3c66",
+                              color: "white",
+                              "& .MuiChip-label": { color: "white" },
+                            }}
+                          />
+                        ))}
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        sx={{ mt: 1, fontStyle: "italic" }}
                       >
-                        {tutor.educationalLevel.length > 100
-                          ? `${tutor.educationalLevel.substring(
-                              0,
-                              100
-                            )}(...see more)`
-                          : tutor.educationalLevel}
-                      </span>
-                    </Tooltip>
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Medium:</strong>{" "}
-                    <Tooltip
-                      title={tutor.medium}
-                      arrow
-                      open={tooltipOpen[tutor.id]?.medium || false}
-                      onClose={() => handleTooltipClose(tutor.id, "medium")}
-                      componentsProps={{
-                        tooltip: {
-                          sx: {
-                            fontSize: "1rem",
-                            backgroundColor: "#1f3c66",
-                            color: "#fff",
-                          },
-                        },
-                      }}
-                    >
-                      <span
-                        onClick={() => handleTooltipOpen(tutor.id, "medium")}
-                        style={{ cursor: "pointer" }}
-                      >
-                        {tutor.medium.length > 100
-                          ? tutor.medium.substring(0, 100) + "(..see more)"
-                          : tutor.medium}
-                      </span>
-                    </Tooltip>
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Available:</strong>{" "}
-                    <Tooltip
-                      title={tutor.date}
-                      arrow
-                      open={tooltipOpen[tutor.id]?.date || false}
-                      onClose={() => handleTooltipClose(tutor.id, "date")}
-                      componentsProps={{
-                        tooltip: {
-                          sx: {
-                            fontSize: "1rem",
-                            backgroundColor: "#1f3c66",
-                            color: "#fff",
-                          },
-                        },
-                      }}
-                    >
-                      <span
-                        onClick={() => handleTooltipOpen(tutor.id, "date")}
-                        style={{ cursor: "pointer" }}
-                      >
-                        {tutor.date.length > 10
-                          ? tutor.date.substring(0, 10) + "(..see more)"
-                          : tutor.date}
-                      </span>
-                    </Tooltip>
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Platform:</strong>{" "}
-                    <Tooltip
-                      title={tutor.platform}
-                      arrow
-                      open={tooltipOpen[tutor.id]?.platform || false}
-                      onClose={() => handleTooltipClose(tutor.id, "platform")}
-                      componentsProps={{
-                        tooltip: {
-                          sx: {
-                            fontSize: "1rem",
-                            backgroundColor: "#1f3c66",
-                            color: "#fff",
-                          },
-                        },
-                      }}
-                    >
-                      <span
-                        onClick={() => handleTooltipOpen(tutor.id, "platform")}
-                        style={{ cursor: "pointer" }}
-                      >
-                        {tutor.platform.length > 100
-                          ? tutor.platform.substring(0, 100) + "(..see more)"
-                          : tutor.platform}
-                      </span>
-                    </Tooltip>
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Locations:</strong>{" "}
-                    <Tooltip
-                      title={tutor.location}
-                      arrow
-                      open={tooltipOpen[tutor.id]?.location || false}
-                      onClose={() => handleTooltipClose(tutor.id, "location")}
-                      componentsProps={{
-                        tooltip: {
-                          sx: {
-                            fontSize: "1rem",
-                            backgroundColor: "#1f3c66",
-                            color: "#fff",
-                          },
-                        },
-                      }}
-                    >
-                      <span
-                        onClick={() => handleTooltipOpen(tutor.id, "location")}
-                        style={{ cursor: "pointer" }}
-                      >
-                        {tutor.location.length > 10
-                          ? tutor.location.substring(0, 10) + "(..see more)"
-                          : tutor.location}
-                      </span>
-                    </Tooltip>
-                  </Typography>
-                  {/* Add "Contact Now" Button */}
-                  <Box sx={{ mt: 2, textAlign: "center" }}>
-                    <Link href={`https://wa.link/f8ewij`} passHref>
-                      <Button
-                        variant="contained"
-                        startIcon={<PhoneIcon />}
-                        sx={{
-                          width: "100%",
-                          py: 1.5,
-                          fontWeight: 600,
-                          borderRadius: 2,
-                          boxShadow: 3,
-                          backgroundColor: "#1f3c66", // Custom background color
-                          color: "white", // Custom text color
-                          "&:hover": {
-                            backgroundColor: "#1a3357", // Darker shade for hover
-                            transform: "scale(1.02)",
-                            boxShadow: 4,
-                          },
-                          transition: "transform 0.2s, background-color 0.2s", // Smooth transition for hover effects
-                        }}
-                      >
-                        Contact Now
-                      </Button>
-                    </Link>
-                  </Box>
-                </CardContent>
-              </Card>
+                        <Tooltip
+                          title={tutor.bio}
+                          arrow
+                          open={tooltipOpen[tutor.id]?.bio || false}
+                          onClose={() => handleTooltipClose(tutor.id, "bio")}
+                          componentsProps={{
+                            tooltip: {
+                              sx: {
+                                fontSize: "1rem",
+                                backgroundColor: "#1f3c66",
+                                color: "#fff",
+                                maxWidth: 400,
+                              },
+                            },
+                          }}
+                        >
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleTooltipOpen(tutor.id, "bio");
+                            }}
+                            style={{ cursor: "pointer" }}
+                          >
+                            {tutor.bio.length > 15
+                              ? `${tutor.bio.substring(0, 15)}(...see more)`
+                              : tutor.bio}
+                          </span>
+                        </Tooltip>
+                      </Typography>
+
+                      <Typography variant="body2" sx={{ mt: 1 }}>
+                        <strong>Education:</strong>{" "}
+                        <Tooltip
+                          title={tutor.educationalLevel}
+                          arrow
+                          open={tooltipOpen[tutor.id]?.education || false}
+                          onClose={() =>
+                            handleTooltipClose(tutor.id, "education")
+                          }
+                          componentsProps={{
+                            tooltip: {
+                              sx: {
+                                fontSize: "1rem",
+                                backgroundColor: "#1f3c66",
+                                color: "#fff",
+                                maxWidth: 400,
+                              },
+                            },
+                          }}
+                        >
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleTooltipOpen(tutor.id, "education");
+                            }}
+                            style={{ cursor: "pointer" }}
+                          >
+                            {tutor.educationalLevel.length > 100
+                              ? `${tutor.educationalLevel.substring(
+                                  0,
+                                  100
+                                )}(...see more)`
+                              : tutor.educationalLevel}
+                          </span>
+                        </Tooltip>
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Medium:</strong>{" "}
+                        <Tooltip
+                          title={tutor.medium}
+                          arrow
+                          open={tooltipOpen[tutor.id]?.medium || false}
+                          onClose={() => handleTooltipClose(tutor.id, "medium")}
+                          componentsProps={{
+                            tooltip: {
+                              sx: {
+                                fontSize: "1rem",
+                                backgroundColor: "#1f3c66",
+                                color: "#fff",
+                              },
+                            },
+                          }}
+                        >
+                          <span
+                            onClick={() =>
+                              handleTooltipOpen(tutor.id, "medium")
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            {tutor.medium.length > 100
+                              ? tutor.medium.substring(0, 100) + "(..see more)"
+                              : tutor.medium}
+                          </span>
+                        </Tooltip>
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Available:</strong>{" "}
+                        <Tooltip
+                          title={tutor.date}
+                          arrow
+                          open={tooltipOpen[tutor.id]?.date || false}
+                          onClose={() => handleTooltipClose(tutor.id, "date")}
+                          componentsProps={{
+                            tooltip: {
+                              sx: {
+                                fontSize: "1rem",
+                                backgroundColor: "#1f3c66",
+                                color: "#fff",
+                              },
+                            },
+                          }}
+                        >
+                          <span
+                            onClick={() => handleTooltipOpen(tutor.id, "date")}
+                            style={{ cursor: "pointer" }}
+                          >
+                            {tutor.date.length > 10
+                              ? tutor.date.substring(0, 10) + "(..see more)"
+                              : tutor.date}
+                          </span>
+                        </Tooltip>
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Platform:</strong>{" "}
+                        <Tooltip
+                          title={tutor.platform}
+                          arrow
+                          open={tooltipOpen[tutor.id]?.platform || false}
+                          onClose={() =>
+                            handleTooltipClose(tutor.id, "platform")
+                          }
+                          componentsProps={{
+                            tooltip: {
+                              sx: {
+                                fontSize: "1rem",
+                                backgroundColor: "#1f3c66",
+                                color: "#fff",
+                              },
+                            },
+                          }}
+                        >
+                          <span
+                            onClick={() =>
+                              handleTooltipOpen(tutor.id, "platform")
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            {tutor.platform.length > 100
+                              ? tutor.platform.substring(0, 100) +
+                                "(..see more)"
+                              : tutor.platform}
+                          </span>
+                        </Tooltip>
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Locations:</strong>{" "}
+                        <Tooltip
+                          title={tutor.location}
+                          arrow
+                          open={tooltipOpen[tutor.id]?.location || false}
+                          onClose={() =>
+                            handleTooltipClose(tutor.id, "location")
+                          }
+                          componentsProps={{
+                            tooltip: {
+                              sx: {
+                                fontSize: "1rem",
+                                backgroundColor: "#1f3c66",
+                                color: "#fff",
+                              },
+                            },
+                          }}
+                        >
+                          <span
+                            onClick={() =>
+                              handleTooltipOpen(tutor.id, "location")
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            {tutor.location.length > 10
+                              ? tutor.location.substring(0, 10) + "(..see more)"
+                              : tutor.location}
+                          </span>
+                        </Tooltip>
+                      </Typography>
+                      <Box sx={{ mt: 2, textAlign: "center" }}>
+                        <Link href={`https://wa.link/f8ewij`} passHref>
+                          <Button
+                            variant="contained"
+                            startIcon={<PhoneIcon />}
+                            sx={{
+                              width: "100%",
+                              py: 1.5,
+                              fontWeight: 600,
+                              borderRadius: 2,
+                              boxShadow: 3,
+                              backgroundColor: "#1f3c66",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#1a3357",
+                                transform: "scale(1.02)",
+                                boxShadow: 4,
+                              },
+                              transition:
+                                "transform 0.2s, background-color 0.2s",
+                            }}
+                          >
+                            Contact Now
+                          </Button>
+                        </Link>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
 
-        {/* Pagination */}
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          <Pagination
-            count={totalPages}
-            page={currentPage}
-            onChange={handlePageChange}
-            sx={{
-              "& .MuiPaginationItem-root": {
-                color: "#1f3c66", // Default text color
-                borderColor: "#1f3c66", // Border color for outlined buttons
-              },
-              "& .MuiPaginationItem-root.Mui-selected": {
-                backgroundColor: "#1f3c66", // Background color for the selected page
-                color: "#fff", // Text color for the selected page
-                "&:hover": {
-                  backgroundColor: "#1a3357", // Darker background on hover for the selected page
-                },
-              },
-              "& .MuiPaginationItem-root:hover": {
-                backgroundColor: "rgba(31, 60, 102, 0.1)", // Light background on hover for other pages
-              },
-            }}
-          />
-        </Box>
+            {filteredTutors.length > 0 && (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+                <Pagination
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  sx={{
+                    "& .MuiPaginationItem-root": {
+                      color: "#1f3c66",
+                      borderColor: "#1f3c66",
+                    },
+                    "& .MuiPaginationItem-root.Mui-selected": {
+                      backgroundColor: "#1f3c66",
+                      color: "#fff",
+                      "&:hover": { backgroundColor: "#1a3357" },
+                    },
+                    "& .MuiPaginationItem-root:hover": {
+                      backgroundColor: "rgba(31, 60, 102, 0.1)",
+                    },
+                  }}
+                />
+              </Box>
+            )}
 
-        {filteredTutors.length === 0 && (
+            {filteredTutors.length === 0 && (
+              <Box
+                sx={{
+                  textAlign: "center",
+                  p: 4,
+                  border: "1px dashed",
+                  borderColor: "primary.main",
+                  borderRadius: 2,
+                  backgroundColor: "rgba(25, 118, 210, 0.05)",
+                  maxWidth: 500,
+                  mx: "auto",
+                  my: 4,
+                }}
+              >
+                <ErrorOutlineIcon
+                  color="primary"
+                  sx={{ fontSize: 48, mb: 2 }}
+                />
+                <Typography variant="h6" gutterBottom>
+                  Couldn't find your perfect tutor?
+                </Typography>
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ mb: 3 }}
+                >
+                  We'll help you find a customized tutor matching your
+                  requirements
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  startIcon={<ContactMailIcon />}
+                  onClick={() => window.open("https://wa.link/mysox5")}
+                  sx={{
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 50,
+                    boxShadow: 2,
+                    "&:hover": { boxShadow: 4, transform: "translateY(-2px)" },
+                  }}
+                >
+                  Request Custom Tutor
+                </Button>
+              </Box>
+            )}
+          </>
+        ) : (
           <Box
             sx={{
               textAlign: "center",
@@ -646,31 +753,15 @@ export default function TutorsPage() {
           >
             <ErrorOutlineIcon color="primary" sx={{ fontSize: 48, mb: 2 }} />
             <Typography variant="h6" gutterBottom>
-              Couldn't find your perfect tutor?
+              {!gradeType
+                ? "Please select a level first"
+                : "Please select a grade level"}
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-              We'll help you find a customized tutor matching your specific
-              requirements
+              {!gradeType
+                ? "Choose either Ordinary Level (O/L) or Advanced Level (A/L) to continue"
+                : "Select either Grade 10 or Grade 11 to see available tutors"}
             </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              startIcon={<ContactMailIcon />}
-              onClick={() => window.open("https://wa.link/mysox5")}
-              sx={{
-                px: 4,
-                py: 1.5,
-                borderRadius: 50,
-                boxShadow: 2,
-                "&:hover": {
-                  boxShadow: 4,
-                  transform: "translateY(-2px)",
-                },
-              }}
-            >
-              Request Custom Tutor
-            </Button>
           </Box>
         )}
       </Container>
