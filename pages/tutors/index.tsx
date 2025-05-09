@@ -635,7 +635,7 @@ export default function TutorsPage() {
                             }
                             style={{ cursor: "pointer" }}
                           >
-                            {tutor.location.length > 10
+                            {tutor?.location?.length > 10
                               ? tutor.location.substring(0, 10) + "(..see more)"
                               : tutor.location}
                           </span>
