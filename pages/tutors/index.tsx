@@ -210,7 +210,7 @@ export default function TutorsPage() {
     const cityMatch =
       selectedCity === "All" ||
       tutor.location
-        .split(",")
+        ?.split(",")
         .map((l) => l.trim())
         .includes(selectedCity);
     const searchMatch =
