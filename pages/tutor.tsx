@@ -90,7 +90,7 @@ export default function Tutor() {
   });
 
   // Replace with your actual WhatsApp Business number (with country code, no + or 0)
-  const WHATSAPP_BUSINESS_NUMBER = "94717474228";
+  const WHATSAPP_BUSINESS_NUMBER = "94714279001";
   const BUSINESS_NAME = "iclazz";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

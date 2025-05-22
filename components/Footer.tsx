@@ -65,7 +65,7 @@ export default function Footer() {
             >
               <PhoneIcon />
               <Typography variant="body1">
-                <Link href="tel:+94717474228" color="inherit" underline="hover">
+                <Link href="tel:+94714279001" color="inherit" underline="hover">
                   +94 71 747 4228
                 </Link>
               </Typography>
